@@ -20,10 +20,37 @@ pygame.display.set_icon(pygame.image.load('data/img/Entity/player/1/idle/1.png')
 
 #data
 
-with open('data/save_file.txt') as save_file:
-  save_data = json.load(save_file)
-  #for entry in save_data.items():
-    #print(entry)
+
+if os.path.isfile('data/save_file.json'):
+  with open('data/save_file.json') as save_file:
+    save_data = json.load(save_file)
+else:
+  data = {
+  'story_started' : False,
+  'story_finished' : False,
+  'level' : 1,
+  'stage' : 1,
+  'death_counter' : 0,
+  'NOTEBOOKS_COLLECTED' : 0,
+  'notebook_collected_temp' : False,
+  'question_params' : [0,0,0,0,0,0],
+  'tempList' : [0,0,0,0,0,0,0,0,0,0],
+  'question_window' : False,
+  'question_loaded' : False,
+  'question_answered' : False,
+  'correct_answers_story' : 0,
+  'wrong_answers_story' : 0,
+  'max_streak_story' : 0,
+  'streak_story' : 0,
+  'max_streak' : 0,
+  'upgradeMagicCollision' : False,
+  }
+  with open('data/save_file.json', 'w') as save_file:
+    json.dump(data, save_file)
+  with open('data/save_file.json') as save_file:
+    save_data = json.load(save_file)
+
+
 
 #framerate  
 clock = pygame.time.Clock()
@@ -389,14 +416,14 @@ class Character(pygame.sprite.Sprite):
 
 
     #check for collision with border
-    if self.rect.bottom + dy > 600:
-      dy = 600 - self.rect.bottom
+    if self.rect.bottom + dy > SCREEN_HEIGHT:
+      dy = SCREEN_HEIGHT - self.rect.bottom
     elif self.rect.top + dy < 0:
       dy = 0 + self.rect.top
     elif self.rect.left + dx < 0:
       dx = 0 + self.rect.left
-    elif self.rect.right + dx > 800:
-      dx = 800 - self.rect.right
+    elif self.rect.right + dx > SCREEN_WIDTH:
+      dx = SCREEN_WIDTH - self.rect.right
     
 #    if dx != 0 or dy != 0:
 #      if not movement_fx_channel.get_busy():
@@ -1007,9 +1034,9 @@ while run:
     screen.blit(pygame.image.load(f'data/img/Questions/{question}.png').convert_alpha(), (SCREEN_WIDTH // 2 - 150, 150))
     task_window = screen.blit(task_window_img, (200, 30))
     if question <= 9:
-      task = 'Jaké číslo bude v barevném poli? (pokud číslo je součtem dvou čísel nad ním)'
+      task = 'Jaké číslo bude v barevném poli?'
     elif question <= 14:
-      task = 'Jaký je součet čísel v barevných polích? (pokud číslo je součtem dvou čísel nad ním)'
+      task = 'Jaký je součet čísel v barevných polích?'
     elif question <= 19:
       task = 'Kolik kostiček je ve stavbě?'
     elif question <= 24:
@@ -1427,7 +1454,7 @@ save_data['streak_story'] = streak_story
 save_data['max_streak'] = max_streak
 save_data['upgradeMagicCollision'] = upgradeMagicCollision
 
-with open('data/save_file.txt', 'w') as save_file:
+with open('data/save_file.json', 'w') as save_file:
   json.dump(save_data, save_file)
 
 pygame.quit()
